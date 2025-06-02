@@ -9,6 +9,7 @@ export const useNewsStore = defineStore("news", {
     loading: false,
     activeFilter: "all",
     viewMode: "grid" as "grid" | "list",
+    query: "",
 
     sources: [
       {
@@ -51,13 +52,24 @@ export const useNewsStore = defineStore("news", {
     },
 
     applyFilter() {
-      if (this.activeFilter === "all") {
-        this.articles = this.allArticles;
-      } else {
-        this.articles = this.allArticles.filter(
-          (a) => new URL(`https://${a.source}`).hostname === this.activeFilter
-        );
-      }
+      const filterBySource =
+        this.activeFilter === "all"
+          ? this.allArticles
+          : this.allArticles.filter(
+              (a) =>
+                new URL(`https://${a.source}`).hostname === this.activeFilter
+            );
+
+      const q = this.query.toLowerCase().trim();
+      const filterByQuery = q
+        ? filterBySource.filter(
+            (a) =>
+              a.title.toLowerCase().includes(q) ||
+              a.description.toLowerCase().includes(q)
+          )
+        : filterBySource;
+
+      this.articles = filterByQuery;
       this.currentPage = 1;
     },
 
@@ -80,6 +92,18 @@ export const useNewsStore = defineStore("news", {
 
     setPage(page: number) {
       this.currentPage = page;
+    },
+
+    setQuery(query: string) {
+      this.query = query;
+      this.applyFilter();
+    },
+
+    resetFilters() {
+      this.activeFilter = "all";
+      this.query = "";
+      this.currentPage = 1;
+      this.applyFilter();
     },
   },
 });

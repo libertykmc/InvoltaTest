@@ -38,6 +38,19 @@
       </button>
     </div>
 
+    <div class="search-bar">
+      <input
+        type="text"
+        :value="newsStore.query"
+        placeholder="Поиск по заголовку или описанию..."
+        @input="onSearchInput"
+      />
+    </div>
+
+    <div class="reset-wrapper">
+      <button @click="onResetFilters">Сбросить фильтры</button>
+    </div>
+
     <div v-if="loading">Загрузка...</div>
 
     <div v-if="newsStore.viewMode === 'grid'" class="grid-view">
@@ -85,6 +98,25 @@ const { paginatedArticles, loading, currentPage, totalPages } =
   storeToRefs(newsStore);
 
 const route = useRoute();
+const router = useRouter();
+
+function onSearchInput(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const q = input.value;
+  router.replace({
+    query: {
+      ...route.query,
+      query: q,
+    },
+  });
+
+  newsStore.setQuery(q);
+}
+
+function onResetFilters() {
+  newsStore.resetFilters();
+  router.replace({ path: "/news/1", query: {} });
+}
 
 onMounted(() => {
   newsStore.initViewMode();
@@ -92,6 +124,11 @@ onMounted(() => {
     const pageFromRoute = parseInt(route.params.page as string);
     if (!isNaN(pageFromRoute)) {
       newsStore.setPage(pageFromRoute);
+    }
+
+    const queryFromRoute = route.query.query as string;
+    if (queryFromRoute) {
+      newsStore.setQuery(queryFromRoute);
     }
   });
 });
@@ -103,6 +140,13 @@ watch(
     if (!isNaN(page)) {
       newsStore.setPage(page);
     }
+  }
+);
+
+watch(
+  () => route.query.query,
+  (newQuery) => {
+    newsStore.setQuery((newQuery || "") as string);
   }
 );
 </script>
@@ -133,6 +177,35 @@ button.active {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 0.8rem;
+}
+
+.search-bar {
+  margin-bottom: 1rem;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.reser-wrapper {
+  margin-top: 0.5rem;
+}
+
+.reset-wrapper button {
+  padding: 0.4rem 1rem;
+  font-size: 14px;
+  background: #eee;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reset-wrapper button:hover {
+  background: #ddd;
 }
 
 .card {
