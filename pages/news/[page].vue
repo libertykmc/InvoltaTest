@@ -36,41 +36,43 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useNewsStore } from "@/stores/useNewsStore";
-import { storeToRefs } from "pinia";
+import { computed, onBeforeMount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useNewsStore } from '@/stores/useNewsStore'
+import { storeToRefs } from 'pinia'
+import NewsToolBar from '@/components/NewsToolBar.vue'
+import NewsFilters from '@/components/NewsFilter.vue'
+import NewsViewToggle from '@/components/NewsViewToggle.vue'
+import NewsCardGrid from '@/components/NewsCardGrid.vue'
+import NewsCardList from '@/components/NewsCardList.vue'
+import Pagination from '@/components/Pagination.vue'
 
-import NewsToolBar from "@/components/NewsToolBar.vue";
-import NewsFilters from "@/components/NewsFilter.vue";
-import NewsViewToggle from "@/components/NewsViewToggle.vue";
-import NewsCardGrid from "@/components/NewsCardGrid.vue";
-import NewsCardList from "@/components/NewsCardList.vue";
-import Pagination from "@/components/Pagination.vue";
+const newsStore = useNewsStore()
+const { paginatedArticles, loading, totalPages } = storeToRefs(newsStore)
 
-const newsStore = useNewsStore();
+const route = useRoute()
 
-onMounted(() => {
-  newsStore.initViewMode();
-});
 
-const { paginatedArticles, loading, totalPages, currentPage } =
-  storeToRefs(newsStore);
+await useAsyncData('articles', async () => {
+  const page = parseInt(route.params.page as string)
+  if (!isNaN(page)) {
+    newsStore.setPage(page)
+  }
 
-const route = useRoute();
-const router = useRouter();
+  await newsStore.fetchArticles()
+})
 
-const routePage = parseInt(route.params.page as string);
-if (!isNaN(routePage)) {
-  newsStore.setPage(routePage);
-}
 
-await newsStore.fetchArticles();
+onBeforeMount(() => {
+  if (process.client) {
+    newsStore.initViewMode()
+  }
+})
 
 const pageBinding = computed({
   get: () => newsStore.currentPage,
   set: (val: number) => newsStore.setPage(val),
-});
+})
 </script>
 
 <style scoped>

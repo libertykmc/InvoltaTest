@@ -10,6 +10,7 @@ export const useNewsStore = defineStore("news", {
     activeFilter: "all",
     viewMode: "grid" as "grid" | "list",
     query: "",
+    viewModeReady: false,
 
     sources: [
       {
@@ -88,6 +89,7 @@ export const useNewsStore = defineStore("news", {
       if (saved === "grid" || saved === "list") {
         this.viewMode = saved;
       }
+      this.viewModeReady = true;
     },
 
     setPage(page: number) {

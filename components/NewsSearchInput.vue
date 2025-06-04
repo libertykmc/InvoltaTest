@@ -24,6 +24,18 @@ const newsStore = useNewsStore();
 
 const search = ref((route.query.query as string) || "");
 
+let debounceTimeout: ReturnType<typeof setTimeout>;
+
+watch(
+  search,
+  (newValue) => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      applySearch();
+    }, 500); 
+  }
+);
+
 watch(
   () => route.query.query,
   (newQuery) => {

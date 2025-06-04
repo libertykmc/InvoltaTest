@@ -1,16 +1,16 @@
 <template>
-  <div class="view-toggle">
-    <button
-      :class="{ active: newsStore.viewMode === 'grid' }"
-      @click="setMode('grid')"
-    >
-      <Icon :icon="newsStore.viewMode === 'grid' ? 'grid-active' : 'grid'" />
-    </button>
+  <div v-if="newsStore.viewModeReady" class="view-toggle">
     <button
       :class="{ active: newsStore.viewMode === 'list' }"
       @click="setMode('list')"
     >
       <Icon :icon="newsStore.viewMode === 'list' ? 'list-active' : 'list'" />
+    </button>
+    <button
+      :class="{ active: newsStore.viewMode === 'grid' }"
+      @click="setMode('grid')"
+    >
+      <Icon :icon="newsStore.viewMode === 'grid' ? 'grid-active' : 'grid'" />
     </button>
   </div>
 </template>
@@ -29,7 +29,7 @@ const setMode = (mode: "grid" | "list") => {
 <style scoped>
 .view-toggle {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 button {

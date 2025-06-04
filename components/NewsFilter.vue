@@ -18,8 +18,8 @@ const newsStore = useNewsStore();
 
 const filterOptions = [
   { label: "Все", key: "all" },
-  { label: "Mos.ru", key: "mos.ru" },
   { label: "Lenta.ru", key: "lenta.ru" },
+  { label: "Mos.ru", key: "mos.ru" },
 ];
 
 const setFilter = (key: string) => {
