@@ -5,7 +5,7 @@ export const useNewsStore = defineStore("news", {
     allArticles: [] as any[],
     articles: [] as any[],
     currentPage: 1,
-    pageSize: 6,
+    pageSize: 8,
     loading: false,
     activeFilter: "all",
     viewMode: "grid" as "grid" | "list",
