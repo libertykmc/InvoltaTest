@@ -23,7 +23,7 @@ export async function parseRss(url: string) {
     })();
 
     const image =
-      imgFromEnclosure || imgFromMedia || imgFromDescription || "/lesha2.png";
+      imgFromEnclosure || imgFromMedia || imgFromDescription || "/nope.png";
 
     return {
       title: item.title,
